@@ -25,8 +25,8 @@ const csscombProdConfig = './csscomb_prod_config.json'
 
 const srcSass = srcFolder + '/styles/**/*.+(scss|sass)'
 const srcJS = srcFolder + '/scripts/*.js'
-const srcHTML = srcFolder + '/pages/html/*.html'
-const srcPHP = srcFolder + '/pages/php/*.php'
+const srcHTML = srcFolder + '/pages/**/*.html'
+const srcPHP = srcFolder + '/pages/**/*.php'
 const srcImg = srcFolder + '/imgs/*.*'
 
 const publicStyleDest = publicFolder + '/styles/'
