@@ -68,6 +68,7 @@ const isPage = function(file)
 
 function styleDev()
 {
+    del(publicStyleDest + '/*')
     return gulp.src(srcSass)
     // // .pipe(gulp_plumber({ errorHandler: onError }))
     .pipe(gulp_sass())
@@ -87,12 +88,14 @@ function beautifySCSS()
 
 function scriptDev()
 {
+    del(publicScriptDest + '/*')
     return gulp.src(srcJS)
     .pipe(gulp.dest(publicScriptDest))
 }
 
 function htmlDev()
 {
+    del([publicPagesDest + '/*', publicFolder + '/*.html'])
     return gulp.src(srcHTML)
     .pipe(gulp_if(isIndex, gulp.dest(publicFolder)))
     .pipe(gulp_if(isPage, gulp.dest(publicPagesDest)))
@@ -100,6 +103,7 @@ function htmlDev()
 
 function phpDev()
 {
+    del([publicPagesDest + '/*', publicFolder + '/*.php'])
     return gulp.src(srcPHP)
     .pipe(gulp_if(isIndex, gulp.dest(publicFolder)))
     .pipe(gulp_if(isPage, gulp.dest(publicPagesDest)))
@@ -164,6 +168,7 @@ const pagesProd = gulp.parallel(htmlProd, phpProd)
 
 function imgProd()
 {
+    del([publicImgsDest + '/*'])
     return gulp.src(srcImg)
     .pipe(gulp_cache(gulp_imagemin([
                                     gulp_imagemin.gifsicle({interlaced: true, optimizationLevel: 3, colors: 128}),
@@ -247,11 +252,11 @@ function devSync()
         port: browserPort,
     });
 
-    gulp.watch(srcSass, gulp.series(clean, styleDev, browserSyncReload))
-    gulp.watch(srcJS, gulp.series(clean, scriptDev, browserSyncReload))
-    gulp.watch(srcHTML, gulp.series(clean, htmlDev, browserSyncReload))
-    gulp.watch(srcPHP, gulp.series(clean, phpDev, browserSyncReload))
-    gulp.watch(srcImg, gulp.series(clean, imgDev, browserSyncReload))
+    gulp.watch(srcSass, gulp.series(styleDev, browserSyncReload))
+    gulp.watch(srcJS, gulp.series(scriptDev, browserSyncReload))
+    gulp.watch(srcHTML, gulp.series(htmlDev, browserSyncReload))
+    gulp.watch(srcPHP, gulp.series(phpDev, browserSyncReload))
+    gulp.watch(srcImg, gulp.series(imgDev, browserSyncReload))
     gulp.watch("./**/**/*", browserSyncReload)
 }
 
