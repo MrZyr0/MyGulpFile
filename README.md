@@ -18,7 +18,12 @@ Visit https://nodejs.org/
 npm i
 ```
 
-4. Configure browserSync
+4. Install gulp globaly
+```bash
+npm i -g gulp
+```
+
+5. Configure browserSync
 Edit the file `gulpfile.js` at the root of the projet at lines 18 and 19 to setup the link and the port to use by browserSync like below.
 
 ```javascript
@@ -26,7 +31,7 @@ const browserLink = 'http://localhost/'
 const browserPort = 80
 ```
 
-5. You're ready to go !
+6. You're ready to go !
 
 
 
