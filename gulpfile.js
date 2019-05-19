@@ -1,5 +1,6 @@
-const gulp = require('gulp');
+const gulp = require('gulp')
 const gulp_sass = require('gulp-sass')
+const gulp_sassGlob = require('gulp-sass-glob')
 const gulp_csscomb = require('gulp-csscomb')
 const gulp_prefixer = require('gulp-autoprefixer')
 const gulp_cssnano = require('gulp-cssnano')
@@ -15,8 +16,8 @@ const browserSync = require('browser-sync').create()
 const del = require("del");
 // const gulp_sourceMaps = require('gulp-sourcemaps')
 
-const browserLink = 'https://localhost/1-SITES/MyGulpConfig/public/'
-const browserPort = 443
+const browserLink = '[YOUR LINK TO YOUR PROJECT USING A WEBSERVER]'
+const browserPort = 80
 const srcFolder = './src'
 const publicFolder = './public'
 
@@ -71,6 +72,7 @@ function styleDev()
     del(publicStyleDest + '/*')
     return gulp.src(srcSass)
     // // .pipe(gulp_plumber({ errorHandler: onError }))
+    .pipe(gulp_sassGlob())
     .pipe(gulp_sass())
     .pipe(gulp_prefixer())
     .pipe(gulp_csscomb(csscombDevConfig))       // PB config not used https://github.com/koistya/gulp-csscomb/issues/37 // TODO: resolv, csscomb config pb
