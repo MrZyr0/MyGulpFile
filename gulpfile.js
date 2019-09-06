@@ -1,65 +1,43 @@
 const gulp = require('gulp')
-const gulp_sass = require('gulp-sass')
-const gulp_sassGlob = require('gulp-sass-glob')
-const gulp_csscomb = require('gulp-csscomb')
-const gulp_prefixer = require('gulp-autoprefixer')
-const gulp_cssnano = require('gulp-cssnano')
-const gulp_compressor = require('gulp-compress')
-const gulp_if = require('gulp-if')
-const gulp_cache = require('gulp-cache')
-const gulp_imagemin = require('gulp-imagemin')
-const imageminJpegoptim = require('imagemin-jpegoptim');
-const imageminMozjpeg = require('imagemin-mozjpeg');
-const imageminPngquant = require('imagemin-pngquant');
-const imageminSvgo = require('imagemin-svgo');
-const browserSync = require('browser-sync').create()
-const del = require("del");
-// const gulp_sourceMaps = require('gulp-sourcemaps')
+const gulp_sass = require('gulp-sass')                            // Sass compilation
+const gulp_sassGlob = require('gulp-sass-glob')                   // Get multiple sass files
+const gulp_prefixer = require('gulp-autoprefixer')                // Prefix CSS for compatibilities issues
+const gulp_cleanCSS = require('gulp-clean-css')                   // Optimize CSS
+const gulp_uglify = require('gulp-uglify')                        // Optimize JS
+const gulp_imagemin = require('gulp-imagemin')                    // Optimaze images
+const gulp_cache = require('gulp-cache')                          // Cache image optimizations
+const imageminJpegoptim = require('imagemin-jpegoptim')           // Optimize .jpg & .jpeg images
+const imageminMozjpeg = require('imagemin-mozjpeg')               // Optimize .jpg & .jpeg images
+const browserSync = require('browser-sync').create()              // Sync multiple browsers & auto refresh naviguator on save
+const del = require("del");                                       // Delete files before optimizations
 
 const browserLink = '[YOUR LINK TO YOUR PROJECT USING A WEBSERVER]'
-const browserPort = 80
+const browserPort = 3030
 const srcFolder = './src'
 const publicFolder = './public'
 
-const csscombDevConfig = './csscomb_dev_config.json'
-const csscombProdConfig = './csscomb_prod_config.json'
+const srcFolder = './_src'
+const publicFolder = '.'
 
-const srcSass = srcFolder + '/styles/**/*.+(scss|sass)'
-const srcJS = srcFolder + '/scripts/*.js'
-const srcHTML = srcFolder + '/pages/**/*.html'
-const srcPHP = srcFolder + '/pages/**/*.php'
-const srcImg = srcFolder + '/imgs/*.*'
+const srcSass = srcFolder + '/sass/**/**/*.+(scss|sass)'
+const srcJS = srcFolder + '/js/*.js'
+const srcPHP = srcFolder + '/php/*.php'
+const srcImg = srcFolder + '/img/*.+(svg|png|jpg|jpeg|gif)'
 
-const publicStyleDest = publicFolder + '/styles/'
-const publicScriptDest = publicFolder + '/scripts/'
-const publicPagesDest = publicFolder + '/pages/'
-const publicImgsDest = publicFolder + '/imgs/'
+const publicStyleDest = publicFolder + '/'
+const publicScriptDest = publicFolder + '/js'
+const publicPagesDest = publicFolder + '/'
+const publicImgsDest = publicFolder + '/assets'
 
-// TODO: Create an init function
-// TODO: integrate uncss to styleProd()
+
+
+// TODO: Add a minifier for php files and find a solution to get interlaced png
 
 function clean(done)
 {
-    del([publicFolder + '/**/*.*', '!' + publicFolder + '/imgs', '!' + publicFolder + '/imgs/**/*.*', '!' + publicFolder + '/imgs/**/*'])
+    del([publicStyleDest + '*.css', publicScriptDest + '/*.js', publicPagesDest + '*.php', publicImgsDest + '/*'])
+    gulp_cache.clearAll()
     done();
-}
-
-function cleanFull(done)
-{
-    del(publicFolder + '/**/*.*')
-    done();
-}
-
-const isIndex = function(file)
-{
-    if (file.basename == 'index.html' || file.basename == 'index.php') { return true }
-    else { return false }
-}
-
-const isPage = function(file)
-{
-    if (file.basename != 'index.html' && file.basename != 'index.php') { return true }
-    else { return false }
 }
 
 
@@ -69,64 +47,51 @@ const isPage = function(file)
 
 function styleDev()
 {
-    del(publicStyleDest + '/*')
+    del(publicStyleDest + '*.css')
     return gulp.src(srcSass)
-    // // .pipe(gulp_plumber({ errorHandler: onError }))
     .pipe(gulp_sassGlob())
     .pipe(gulp_sass())
-    .pipe(gulp_prefixer())
-    .pipe(gulp_csscomb(csscombDevConfig))       // PB config not used https://github.com/koistya/gulp-csscomb/issues/37 // TODO: resolv, csscomb config pb
-    // // .pipe(gulp_notify("Sass compiled !"))
+    .pipe(gulp_prefixer('last 6 versions'))   // list of targeted browsers => https://browserl.ist/?q=last+6+versions
     .pipe(gulp.dest(publicStyleDest))
-}
-
-// TODO: FIX IT !
-function beautifySCSS()
-{
-    return gulp.src(srcSass)
-    .pipe(gulp_csscomb(csscombDevConfig))       // PB config not used https://github.com/koistya/gulp-csscomb/issues/37 // TODO: resolv, csscomb config pb
-    .pipe(gulp.dest(srcSass))
 }
 
 function scriptDev()
 {
-    del(publicScriptDest + '/*')
+    del(publicScriptDest + '/*.js')
     return gulp.src(srcJS)
     .pipe(gulp.dest(publicScriptDest))
 }
 
-function htmlDev()
-{
-    del([publicPagesDest + '/*', publicFolder + '/*.html'])
-    return gulp.src(srcHTML)
-    .pipe(gulp_if(isIndex, gulp.dest(publicFolder)))
-    .pipe(gulp_if(isPage, gulp.dest(publicPagesDest)))
-}
 
-function phpDev()
+function pagesDev()
 {
-    del([publicPagesDest + '/*', publicFolder + '/*.php'])
+    del([publicPagesDest + '*.php'])
     return gulp.src(srcPHP)
-    .pipe(gulp_if(isIndex, gulp.dest(publicFolder)))
-    .pipe(gulp_if(isPage, gulp.dest(publicPagesDest)))
+    .pipe(gulp.dest(publicPagesDest))
 }
 
-const pagesDev = gulp.parallel(htmlDev, phpDev)
 
 function imgDev()
 {
+    del([publicImgsDest + '/img/*.+(svg|png|jpg|jpeg|gif)'])
     return gulp.src(srcImg)
     .pipe(gulp_cache(gulp_imagemin([
-                                    gulp_imagemin.gifsicle({interlaced: true, optimizationLevel: 1, colors: 128}),
-                                    gulp_imagemin.jpegtran({progressive: true}),
-                                    imageminJpegoptim ({progressive: true, strilAll: true}),
-                                    imageminMozjpeg({quality: 50, arithmetic: true, arithmetic: true, smooth: 50}),
-                                    imageminPngquant({speed: 1, strip: true, quality: [0.3, 0.5]}),
-                                    imageminSvgo(),
-                                    ]))
-        )
+                          gulp_imagemin.gifsicle({interlaced: true, optimizationLevel: 1}),
+
+                          imageminJpegoptim ({progressive: true, strilAll: true}),
+                          imageminMozjpeg({progressive: true, quality: 85}),
+
+                          gulp_imagemin.optipng({interlaced: true, optimizationLevel: 0}),
+
+                          gulp_imagemin.svgo({ plugins: [{ sortAttrs : true }] }),
+                        ])))
     .pipe(gulp.dest(publicImgsDest))
 }
+
+function fontDev() {
+
+}
+
 
 const devBuild = gulp.parallel(styleDev, scriptDev, pagesDev, imgDev)
 
@@ -136,103 +101,47 @@ const devBuild = gulp.parallel(styleDev, scriptDev, pagesDev, imgDev)
 
 function styleProd()
 {
+    del(publicStyleDest + '*.css')
     return gulp.src(srcSass)
+    .pipe(gulp_sassGlob())
     .pipe(gulp_sass())
-    .pipe(gulp_prefixer())
-    .pipe(gulp_csscomb())       // PB config not used https://github.com/koistya/gulp-csscomb/issues/37 // TODO: resolv, csscomb config pb
-    .pipe(gulp_cssnano())
-    // .pipe(gulp_compressor.minifyCss())
+    .pipe(gulp_prefixer('last 6 versions'))   // list of targeted browsers => https://browserl.ist/?q=last+6+versions
+    .pipe(gulp_cleanCSS())
     .pipe(gulp.dest(publicStyleDest))
 }
 
 function scriptProd()
 {
+    del(publicScriptDest + '/*.js')
     return gulp.src(srcJS)
-    .pipe(gulp_compressor.minifyJs())
+    .pipe(gulp_uglify())
     .pipe(gulp.dest(publicScriptDest))
 }
 
-function htmlProd()
-{
-    return gulp.src(srcHTML)
-    .pipe(gulp_if(isIndex, gulp.dest(publicFolder)))
-    .pipe(gulp_if(isPage, gulp.dest(publicPagesDest)))
-}
 
-function phpProd()
+function pagesProd()
 {
+    del([publicPagesDest + '*.php'])
     return gulp.src(srcPHP)
-    .pipe(gulp_if(isIndex, gulp.dest(publicFolder)))
-    .pipe(gulp_if(isPage, gulp.dest(publicPagesDest)))
+    .pipe(gulp.dest(publicPagesDest))
 }
 
-const pagesProd = gulp.parallel(htmlProd, phpProd)
 
 function imgProd()
 {
-    del([publicImgsDest + '/*'])
-    return gulp.src(srcImg)
-    .pipe(gulp_cache(gulp_imagemin([
-                                    gulp_imagemin.gifsicle({interlaced: true, optimizationLevel: 3, colors: 128}),
-                                    gulp_imagemin.jpegtran({progressive: true, arithmetic: true}),
-                                    gulp_imagemin.optipng({optimizationLevel: 7}),
-                                    imageminJpegoptim ({progressive: true, strilAll: true}),
-                                    imageminMozjpeg({quality: 50, arithmetic: true, arithmetic: true, smooth: 50}),
-                                    imageminPngquant({speed: 1, strip: true, quality: [0.3, 0.5]}),
-                                    imageminSvgo({
-                                                    plugins: [
-                                                        {cleanupAttrs: true },
-                                                        {cleanupEnableBackground: true },
-                                                        {cleanupIDs: true },
-                                                        {cleanupNumericValues: true },
-                                                        {cleanupListOfValues: true },
+  del([publicImgsDest + '/img/*.+(svg|png|jpg|jpeg|gif)'])
+  return gulp.src(srcImg)
+  .pipe(gulp_cache(gulp_imagemin([
+                        gulp_imagemin.gifsicle({interlaced: true, optimizationLevel: 3}),
 
-                                                        {collapseGroups: true },
+                        imageminJpegoptim ({progressive: true, strilAll: true}),
+                        imageminMozjpeg({progressive: true, quality: 85}),
 
-                                                        {convertStyleToAttrs: true },
-                                                        {convertColors: true },
-                                                        {convertPathData: true },
-                                                        {convertTransform: true },
-                                                        {convertShapeToPath: true },
+                        gulp_imagemin.optipng({interlaced: true, optimizationLevel: 7}),
 
-                                                        {inlineStyles: true },
-
-                                                        {mergePaths: true },
-
-                                                        {minifyStyles: true },
-
-                                                        {reusePaths: true },
-
-                                                        {removeDoctype: true },
-                                                        {removeXMLProcInst: true },
-                                                        {removeComments: true },
-                                                        {removeMetadata: true },
-                                                        {removeTitle: true },
-                                                        {removeDesc: true },
-                                                        {removeUselessDefs: true },
-                                                        {removeXMLNS: true },
-                                                        {removeEditorsNSData: true },
-                                                        {removeEmptyAttrs: true },
-                                                        {removeHiddenElems: true },
-                                                        {removeEmptyText: true },
-                                                        {removeEmptyContainers: true },
-                                                        {removeViewBox: true },
-                                                        {removeUnknownsAndDefaults: true },
-                                                        {removeNonInheritableGroupAttrs: true },
-                                                        {removeUselessStrokeAndFill: true },
-                                                        {removeUnusedNS: true },
-                                                        {removeRasterImages: true },
-                                                        {removeDimensions: true },
-                                                        {removeAttrs: true },
-                                                        {removeOffCanvasPaths: true },
-
-                                                        {sortAttrs: true },
-                                                    ]
-                                                }),
-                                  ])
-                    )
-        )
-    .pipe(gulp.dest(publicImgsDest))
+                        gulp_imagemin.svgo({ plugins: [{ sortAttrs : true }] }),
+                      ])))
+  .pipe(gulp.dest(publicImgsDest))
 }
 
 const prodBuild = gulp.parallel(styleProd, scriptProd, pagesProd, imgProd)
@@ -256,27 +165,14 @@ function devSync()
 
     gulp.watch(srcSass, gulp.series(styleDev, browserSyncReload))
     gulp.watch(srcJS, gulp.series(scriptDev, browserSyncReload))
-    gulp.watch(srcHTML, gulp.series(htmlDev, browserSyncReload))
-    gulp.watch(srcPHP, gulp.series(phpDev, browserSyncReload))
+    gulp.watch(srcPHP, gulp.series(pagesDev, browserSyncReload))
     gulp.watch(srcImg, gulp.series(imgDev, browserSyncReload))
-    gulp.watch("./**/**/*", browserSyncReload)
 }
 
 
-// exports.default = defaultTask
-exports.prodBuild = gulp.series(cleanFull, devBuild)
-exports.prodbuild = exports.prodBuild
+exports.default = gulp.series(clean, devBuild, devSync)
+exports.work = exports.default
 
-exports.devBuild = gulp.series(clean, prodBuild) // TODO: add beautifySCSS
-exports.devbuild = exports.devBuild
-
-exports.sync = gulp.series(clean, devBuild, devSync)
-exports.devSync = exports.sync
-exports.devsync = exports.sync
-exports.dev = exports.sync
+exports.build = gulp.series(clean, prodBuild)
 
 exports.clean = clean
-exports.cleanFull = cleanFull
-exports.cleanfull = cleanFull
-exports.fullClean = cleanFull
-exports.fullclean = cleanFull
