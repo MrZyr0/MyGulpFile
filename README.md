@@ -28,7 +28,7 @@ Edit the file `gulpfile.js` at the root of the projet at lines 18 and 19 to setu
 
 ```javascript
 const browserLink = 'http://localhost/'
-const browserPort = 80
+const browserPort = 3030
 ```
 
 6. You're ready to go !
@@ -37,40 +37,15 @@ const browserPort = 80
 
 ## Commandes
 
-##### Browser sync
+##### `gulp`
 When developing, use browser sync to speed up your productivity.
-It'll compile the scss, prefixes it, optimize images and copy scripts/html/PHP in the public folder.
-```bash
-gulp sync
-```
-You can use these aliases:
-- `gulp devSync`
-- `gulp devsync`
-- `gulp dev`
+It'll compile the scss, prefixes it, quickly optimize images, minify scripts and copy PHP files to the good folder.
 
-##### Build files in dev mode
 
-To manualy execute the build task use in `gulp sync`, use one of these commands :
-- `gulp devBuild`
-- `gulp devbuild`.
-
-##### Build before push to production
+##### `gulp build`
 Optimize your project before upload it !
-It'll :
-- compile sass
-- add prefixes to your css
-- concat the css and scripts
-- minify css
-- fully optimize images (with little lossy compression)
+It'll compile the scss, prefixes it, better optimize images (with an acceptable lossy compression), minify scripts and copy PHP files to the good folder.
 
-Use one of these aliases to do this :
-- `gulp prodBuild`
-- `gulp prodbuild`.
-
-##### Clean the project
-For any reason you what to clean-up the public folder, you can soft clean with `gulp clean`. This won't delete images.
-
-To fully clean the folder and delete all files, use `gulp fullClean` or one of these alisases:
-- `gulp cleanFull`
-- `gulp cleanfull`
-- `gulp fullclean`
+##### `gulp clean`
+For any reason you what to clean-up the project by delete build files.
+It will clear caching and delete all build files to just keep essential files and sources.
