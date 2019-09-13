@@ -31,7 +31,6 @@
   "dependencies": {
     "gulp": "^4.0.2",
     "gulp-sass": "^4.0.2",
-    "gulp-sass-glob": "^1.1.0",
     "gulp-autoprefixer": "^7.0.0",
     "gulp-clean-css": "^4.2.0",
     "gulp-uglify": "^3.0.2",

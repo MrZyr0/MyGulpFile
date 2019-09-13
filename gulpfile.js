@@ -1,6 +1,5 @@
 const gulp = require('gulp')
 const gulp_sass = require('gulp-sass')                            // Sass compilation
-const gulp_sassGlob = require('gulp-sass-glob')                   // Get multiple sass files
 const gulp_prefixer = require('gulp-autoprefixer')                // Prefix CSS for compatibilities issues
 const gulp_cleanCSS = require('gulp-clean-css')                   // Optimize CSS
 const gulp_uglify = require('gulp-uglify')                        // Optimize JS
@@ -19,7 +18,8 @@ const publicFolder = './public'
 const srcFolder = './_src'
 const publicFolder = '.'
 
-const srcSass = srcFolder + '/sass/**/**/*.+(scss|sass)'
+const srcSass = srcFolder + '/sass/**/**/*.+(sass|scss)'
+const sassCompileFiles = srcFolder + '/sass/+(style|admin).scss'
 const srcJS = srcFolder + '/js/*.js'
 const srcPHP = srcFolder + '/php/*.php'
 const srcImg = srcFolder + '/img/*.+(svg|png|jpg|jpeg|gif)'
@@ -48,8 +48,7 @@ function clean(done)
 function styleDev()
 {
     del(publicStyleDest + '*.css')
-    return gulp.src(srcSass)
-    .pipe(gulp_sassGlob())
+    return gulp.src(sassCompileFiles)
     .pipe(gulp_sass())
     .pipe(gulp_prefixer('last 6 versions'))   // list of targeted browsers => https://browserl.ist/?q=last+6+versions
     .pipe(gulp.dest(publicStyleDest))
@@ -102,8 +101,7 @@ const devBuild = gulp.parallel(styleDev, scriptDev, pagesDev, imgDev)
 function styleProd()
 {
     del(publicStyleDest + '*.css')
-    return gulp.src(srcSass)
-    .pipe(gulp_sassGlob())
+    return gulp.src(sassCompileFiles)
     .pipe(gulp_sass())
     .pipe(gulp_prefixer('last 6 versions'))   // list of targeted browsers => https://browserl.ist/?q=last+6+versions
     .pipe(gulp_cleanCSS())
