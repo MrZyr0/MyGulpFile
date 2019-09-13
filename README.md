@@ -32,7 +32,7 @@ const browserPort = 3030
 ```
 
 6. You're ready to go !
-
+Work in the /_src folder, all your changes will automatically be optimized and copied to the right place using the `gulp' command during development or `gulp build` to build your project.
 
 
 ## Commandes
