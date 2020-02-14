@@ -14,9 +14,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Folder architecture generation function
+- Sourcemap for dev functions
 - Minifier on PHP files
 - Beautifier for sass files
 - Optimizations for fonts
+- Add Babel
+- Add TypeScript support
+- Add Coffescript support
 
 ### Fixed
 
