@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add TypeScript support
 - Add Coffescript support
 - Add [Rucksackcss](https://www.rucksackcss.org/docs/)
+- Generate Webp for matrix images
 
 ### Fixed
 
