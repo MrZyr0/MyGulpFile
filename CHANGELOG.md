@@ -30,12 +30,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 &nbsp; <!-- break line -->
 
+## [2.1.2] - 2020-02-19
+
+### Changed
+
+- Update `imagemin-mozjpeg` dependency
+
+### Fixed
+
+- `clean` gulp task for clearing directory
+
+### Remove
+
+- Useless `del` commande in gulp tasks
+
+
 ## [2.1.1] - 2020-02-07
 
 ### Fixed
 
 - Sources files path
-- `del`function for clearing directory
+- `del` function for clearing directory
 - `sass-glob` for multiple style sheets
 
 

@@ -11,7 +11,7 @@ const imageminMozjpeg = require('imagemin-mozjpeg'); // Optimize .jpg & .jpeg im
 const browserSync = require('browser-sync').create(); // Sync multiple browsers & auto refresh naviguator on save
 const del = require('del'); // Delete files before optimizations
 
-const browserLink = '[YOUR LINK TO YOUR PROJECT USING A WEBSERVER]';
+const browserLink = 'http://yourLocalURL/';
 const browserPort = 3030;
 const srcFolder = './_src';
 const publicFolder = '.';
@@ -27,18 +27,16 @@ const publicScriptFolder = publicFolder + '/js';
 const publicPagesFolder = publicFolder + '/';
 const publicImgsFolder = publicFolder + '/assets';
 
-function clean(done) {
-	del([
+function clean() {
+	return del([
 		publicStyleFolder + '*.css',
 		publicScriptFolder,
 		publicPagesFolder + '*.php',
 		publicPagesFolder + 'inc/',
-		publicPagesFolder + 'modules/',
+		publicPagesFolder + 'modules-php/',
 		publicPagesFolder + 'page_templates/',
 		publicImgsFolder
-	]);
-	gulp_cache.clearAll();
-	done();
+	]).then(gulp_cache.clearAll());
 }
 
 /********************
@@ -46,7 +44,6 @@ function clean(done) {
  ********************/
 
 function styleDev() {
-	del(publicStyleFolder + '*.css');
 	return gulp
 		.src(sassCompileFiles)
 		.pipe(gulp_sass_glob())
@@ -56,17 +53,14 @@ function styleDev() {
 }
 
 function scriptDev() {
-	del(publicScriptFolder);
 	return gulp.src(srcJS).pipe(gulp.dest(publicScriptFolder));
 }
 
 function pagesDev() {
-	del([publicPagesFolder + '*.php']);
 	return gulp.src(srcPHP).pipe(gulp.dest(publicPagesFolder));
 }
 
 function imgDev() {
-	del([publicImgsFolder + '/img/*.+(svg|png|jpg|jpeg|gif)']);
 	return gulp
 		.src(srcImg)
 		.pipe(
@@ -111,7 +105,6 @@ const devBuild = gulp.parallel(styleDev, scriptDev, pagesDev, imgDev);
  *********************/
 
 function styleProd() {
-	del(publicStyleFolder + '*.css');
 	return gulp
 		.src(sassCompileFiles)
 		.pipe(gulp_sass_glob())
@@ -122,7 +115,6 @@ function styleProd() {
 }
 
 function scriptProd() {
-	del(publicScriptFolder + '/*.js');
 	return gulp
 		.src(srcJS)
 		.pipe(gulp_uglify())
@@ -130,12 +122,10 @@ function scriptProd() {
 }
 
 function pagesProd() {
-	del([publicPagesFolder + '*.php']);
 	return gulp.src(srcPHP).pipe(gulp.dest(publicPagesFolder));
 }
 
 function imgProd() {
-	del([publicImgsFolder + '/img/*.+(svg|png|jpg|jpeg|gif)']);
 	return gulp
 		.src(srcImg)
 		.pipe(
@@ -183,7 +173,7 @@ function browserSyncReload(done) {
 	done();
 }
 
-function devSync() {
+function browserSyncServer(done) {
 	browserSync.init({
 		proxy: browserLink,
 		port: browserPort
@@ -193,9 +183,11 @@ function devSync() {
 	gulp.watch(srcJS, gulp.series(scriptDev, browserSyncReload));
 	gulp.watch(srcPHP, gulp.series(pagesDev, browserSyncReload));
 	gulp.watch(srcImg, gulp.series(imgDev, browserSyncReload));
+
+	done();
 }
 
-exports.default = gulp.series(clean, devBuild, devSync);
+exports.default = gulp.series(clean, devBuild, browserSyncServer);
 exports.work = exports.default;
 
 exports.build = gulp.series(clean, prodBuild);
