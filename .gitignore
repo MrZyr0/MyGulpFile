@@ -1,1 +1,14 @@
-node_modules/
+# IGNORE
+## Ignore every root files
+/*
+
+# EXCEPT
+!/.gitignore
+!/.gitattributes
+!.gitkeep
+!/gulpfile.js
+!/LICENSE.md
+!/NOTICE.md
+!/package-lock.json
+!/package.json
+!/README.md

@@ -20,12 +20,15 @@ const srcSass = srcFolder + '/sass/**/**/*.+(sass|scss)';
 const sassCompileFiles = srcFolder + '/sass/+(style|admin).scss';
 const srcJS = srcFolder + '/js/**/*.js';
 const srcPHP = srcFolder + '/php/**/*.php';
-const srcImg = srcFolder + '/assets/**/*.+(svg|png|jpg|jpeg|gif)';
+const srcImgs = srcFolder + '/assets/imgs/**/*.+(svg|png|jpg|jpeg|gif)';
+const srcFonts = srcFolder + '/assets/fonts/**/*.+(ttf|woff|eot)';
 
 const publicStyleFolder = publicFolder + '/';
 const publicScriptFolder = publicFolder + '/js';
 const publicPagesFolder = publicFolder + '/';
-const publicImgsFolder = publicFolder + '/assets';
+const publicAssetsFolder = publicFolder + '/assets';
+const publicImagesFolder = publicAssetsFolder + '/imgs';
+const publicFontsFolder = publicAssetsFolder + '/fonts';
 
 function clean() {
 	return del([
@@ -35,7 +38,7 @@ function clean() {
 		publicPagesFolder + 'inc/',
 		publicPagesFolder + 'modules-php/',
 		publicPagesFolder + 'page_templates/',
-		publicImgsFolder
+		publicAssetsFolder
 	]).then(gulp_cache.clearAll());
 }
 
@@ -52,7 +55,7 @@ function styleDev() {
 		.pipe(gulp.dest(publicStyleFolder));
 }
 
-function scriptDev() {
+function scriptsDev() {
 	return gulp.src(srcJS).pipe(gulp.dest(publicScriptFolder));
 }
 
@@ -60,9 +63,13 @@ function pagesDev() {
 	return gulp.src(srcPHP).pipe(gulp.dest(publicPagesFolder));
 }
 
-function imgDev() {
+function fontsDev() {
+	return gulp.src(srcFonts).pipe(gulp.dest(publicFontsFolder));
+}
+
+function imgsDev() {
 	return gulp
-		.src(srcImg)
+		.src(srcImgs)
 		.pipe(
 			gulp_cache(
 				gulp_imagemin([
@@ -95,10 +102,16 @@ function imgDev() {
 				])
 			)
 		)
-		.pipe(gulp.dest(publicImgsFolder));
+		.pipe(gulp.dest(publicImagesFolder));
 }
 
-const devBuild = gulp.parallel(styleDev, scriptDev, pagesDev, imgDev);
+const devBuild = gulp.parallel(
+	styleDev,
+	scriptsDev,
+	pagesDev,
+	imgsDev,
+	fontsDev
+);
 
 /*********************
  *   Prod functions  *
@@ -125,9 +138,13 @@ function pagesProd() {
 	return gulp.src(srcPHP).pipe(gulp.dest(publicPagesFolder));
 }
 
+function fontsProd() {
+	return gulp.src(srcFonts).pipe(gulp.dest(publicFontsFolder));
+}
+
 function imgProd() {
 	return gulp
-		.src(srcImg)
+		.src(srcImgs)
 		.pipe(
 			gulp_cache(
 				gulp_imagemin([
@@ -160,10 +177,16 @@ function imgProd() {
 				])
 			)
 		)
-		.pipe(gulp.dest(publicImgsFolder));
+		.pipe(gulp.dest(publicImagesFolder));
 }
 
-const prodBuild = gulp.parallel(styleProd, scriptProd, pagesProd, imgProd);
+const prodBuild = gulp.parallel(
+	styleProd,
+	scriptProd,
+	pagesProd,
+	imgProd,
+	fontsProd
+);
 
 /********************
  *   Browser Sync    *
@@ -180,9 +203,10 @@ function browserSyncServer(done) {
 	});
 
 	gulp.watch(srcSass, gulp.series(styleDev, browserSyncReload));
-	gulp.watch(srcJS, gulp.series(scriptDev, browserSyncReload));
+	gulp.watch(srcJS, gulp.series(scriptsDev, browserSyncReload));
 	gulp.watch(srcPHP, gulp.series(pagesDev, browserSyncReload));
-	gulp.watch(srcImg, gulp.series(imgDev, browserSyncReload));
+	gulp.watch(srcImgs, gulp.series(imgsDev, browserSyncReload));
+	gulp.watch(srcFonts, gulp.series(fontsDev, browserSyncReload));
 
 	done();
 }

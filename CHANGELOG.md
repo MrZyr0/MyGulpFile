@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 &nbsp; <!-- break line -->
 
+
 ## [Unreleased]
 
 ### Added
@@ -28,7 +29,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Get interlaced PNG after optimization
 
+
 &nbsp; <!-- break line -->
+
+
+## [3.0.0] - 2020-02-21
+
+### Added
+
+- Support fonts as assets
+- Specification of source language used for a folder
+
 
 ## [2.1.2] - 2020-02-19
 
