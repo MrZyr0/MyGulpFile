@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Coffescript support
 - Add [Rucksackcss](https://www.rucksackcss.org/docs/)
 - Generate Webp for matrix images
+- Add notifications on actions & errors
+- Add try/catch on errors to restart gulp
 
 ### Fixed
 
