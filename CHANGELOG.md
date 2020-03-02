@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Generate Webp for matrix images
 - Add notifications on actions & errors
 - Add try/catch on errors to restart gulp
+- [Add unused css cleaner](https://css-tricks.com/how-do-you-remove-unused-css-from-a-site/)
 - Uglified sources
 
 ### Fixed
