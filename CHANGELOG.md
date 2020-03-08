@@ -37,6 +37,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 &nbsp; <!-- break line -->
 
 
+## [3.1.0] - 2020-03-8
+
+### Added
+
+- `gulp-include` to be able to include files on build
+
+### Changed
+
+- Update dependencies
+
+
 ## [3.0.0] - 2020-02-21
 
 ### Added
