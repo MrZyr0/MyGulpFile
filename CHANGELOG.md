@@ -27,7 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add notifications on actions & errors
 - Add try/catch on errors to restart gulp
 - [Add unused css cleaner](https://css-tricks.com/how-do-you-remove-unused-css-from-a-site/)
-- Uglified sources
+- Uglified all sources
+- Add a `zip` command to create a ready to use theme package
 
 ### Fixed
 
@@ -35,6 +36,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 &nbsp; <!-- break line -->
+
+
+## [3.2.0] - 2020-03-18
+
+### Changed
+
+- Replace `gulp-uglify` by `gulp-uglify-es` to accept ES6+ syntax
 
 
 ## [3.1.0] - 2020-03-8
